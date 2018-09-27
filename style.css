@@ -1,0 +1,25 @@
+li {
+    list-style-type: none;
+    margin-bottom: 10px;
+}
+
+ul {
+    padding: 0;
+}
+
+input[type=checkbox]:checked + span {
+    text-decoration: line-through;
+}
+
+span {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+input[type=checkbox], span:hover {
+    cursor: pointer;
+}
+
+p {
+    color: red;
+}
