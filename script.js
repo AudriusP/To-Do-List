@@ -50,7 +50,7 @@ function updateLocalStorage() {
 }
 
 function loadLocalStorage() {
-  if (localStorage.getItem('toDoItems') !== '') {
+  if (localStorage.getItem('toDoItems') && localStorage.getItem('toDoItems') !== '' ) {
     initialToDoItems = localStorage.getItem('toDoItems').split('|');
   }
   initialToDoItems.forEach(function(item) {
@@ -77,13 +77,13 @@ function updateDisabledButtons() {
     const upButton = element.getElementsByClassName('upButton').item(0);
     const downButton = element.getElementsByClassName('downButton').item(0);
 
+    upButton.removeAttribute('disabled');
+    downButton.removeAttribute('disabled');
+
     if(!element.previousElementSibling) {
       upButton.setAttribute('disabled', 'true');
     } else if (!element.nextElementSibling) {
       downButton.setAttribute('disabled', 'true');
-    } else {
-      upButton.removeAttribute('disabled');
-      downButton.removeAttribute('disabled');
     }
   })
 }
