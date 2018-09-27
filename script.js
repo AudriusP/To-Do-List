@@ -5,13 +5,8 @@ window.onload = function() {
   loadLocalStorage();
 };
 
-function addItem(textToAdd) {
-  if(!textToAdd || toDoItems.indexOf(textToAdd) !== -1) {
-    document.getElementById('error').innerText = 'Item text is empty or item already exists in the list!';
-    return;
-  } else {
-    document.getElementById('error').innerText = '';
-  }
+function addItem(itemText) {
+  if (!checkInputValidity(itemText)) { return; }
 
   const li = document.createElement('li');
 
@@ -25,33 +20,16 @@ function addItem(textToAdd) {
   };
   li.appendChild(span);
 
-  const text = document.createTextNode(textToAdd);
+  const text = document.createTextNode(itemText);
   span.appendChild(text);
 
-  const upButton = document.createElement('button');
-  upButton.appendChild(document.createTextNode('Up'));
-  upButton.onclick = function() {
-    moveItemUp(li, textToAdd);
-  };
-  li.appendChild(upButton);
-
-  const downButton = document.createElement('button');
-  downButton.appendChild(document.createTextNode('Down'));
-  downButton.onclick = function() {
-    moveItemDown(li, textToAdd);
-  };
-  li.appendChild(downButton);
-
-  const deleteButton = document.createElement('button');
-  deleteButton.appendChild(document.createTextNode('Delete'));
-  deleteButton.onclick = function() {
-    deleteItem(li, textToAdd);
-  };
-  li.appendChild(deleteButton);
+  createButton('upButton', 'Up', moveItemUp, li);
+  createButton('downButton', 'Down', moveItemDown, li);
+  createButton('deleteButton', 'Delete', deleteItem, li, itemText);
 
   const element = document.getElementById('toDoList');
   element.appendChild(li);
-  toDoItems.push(textToAdd);
+  toDoItems.push(itemText);
   updateLocalStorage();
   updateDisabledButtons();
 }
@@ -96,16 +74,36 @@ function updateDisabledButtons() {
   lis = [].slice.call(lis);
 
   lis.forEach(function (element) {
-    const buttons = element.getElementsByTagName('button');
+    const upButton = element.getElementsByClassName('upButton').item(0);
+    const downButton = element.getElementsByClassName('downButton').item(0);
 
     if(!element.previousElementSibling) {
-      buttons[0].setAttribute('disabled', 'true');
+      upButton.setAttribute('disabled', 'true');
     } else if (!element.nextElementSibling) {
-      buttons[1].setAttribute('disabled', 'true');
+      downButton.setAttribute('disabled', 'true');
     } else {
-      [].slice.call(buttons).forEach(function(element) {
-        element.removeAttribute('disabled');
-      });
+      upButton.removeAttribute('disabled');
+      downButton.removeAttribute('disabled');
     }
   })
+}
+
+function createButton(className, buttonText, onclick, parentElement, itemText) {
+  const button = document.createElement('button');
+  button.setAttribute('class', className);
+  button.appendChild(document.createTextNode(buttonText));
+  button.onclick = function() {
+    onclick(parentElement, itemText);
+  };
+  parentElement.appendChild(button);
+}
+
+function checkInputValidity(itemText) {
+  if(!itemText || toDoItems.indexOf(itemText) !== -1) {
+    document.getElementById('error').innerText = 'Item text is empty or item already exists in the list!';
+    return false;
+  } else {
+    document.getElementById('error').innerText = '';
+    return true;
+  }
 }
